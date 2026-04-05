@@ -21,7 +21,7 @@ The **TickTick Quickadd Plugin** lets you quickly create tasks in TickTick direc
 
 2. **Install TickTick Quickadd Plugin:**
    - Download or clone the repository:  
-     `git clone https://github.com/muxinli/ticktick-quick-add-obsidian.git`
+     `git clone https://github.com/heymoosh/ticktick-quick-add-obsidian.git`
    - Open a terminal in the repository folder and run:
      ```bash
      npm install
