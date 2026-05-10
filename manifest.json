@@ -6,6 +6,6 @@
   "description": "Create TickTick tasks from text blocks with automatic Obsidian URI links. Requires Advanced URI plugin.",
   "author": "Muxin Li",
   "authorUrl": "https://github.com/heymoosh",
-  "isDesktopOnly": true,
+  "isDesktopOnly": false,
   "main": "main.js"
 }

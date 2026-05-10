@@ -131,26 +131,11 @@ export class TickTickSettingTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Connect to TickTick')
-            .setDesc('Click to open the OAuth authorization URL in your browser.')
+            .setDesc('Opens the OAuth authorization page in your browser. After approving, you will be returned to Obsidian automatically.')
             .addButton(async (button) => {
                 button.setButtonText('Connect').onClick(async () => {
                     await this.plugin.startAuthFlow();
                 });
             });
-
-        new Setting(containerEl)
-            .setName('Authorization code')
-            .setDesc('Paste the authorization code from TickTick here to obtain an access token.')
-            .addText(text =>
-                text
-                    .setPlaceholder('Enter authorization code')
-                    .onChange(async (code) => {
-                        if (code.trim()) {
-                            await this.plugin.exchangeAuthCodeForToken(code.trim());
-                            text.setValue('');
-                            this.display();
-                        }
-                    })
-            );
     }
 }

@@ -7,18 +7,28 @@
 <body>
   <h1>Authorization Complete</h1>
   <p id="message">Processing...</p>
+  <p id="fallback" style="display:none">
+    If Obsidian did not open automatically,
+    <a id="deeplink" href="#">tap here to return to Obsidian</a>.
+  </p>
   <script>
-    // Parse query parameters from the URL
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const state = params.get('state');
+    const messageEl = document.getElementById('message');
 
     if (code && state) {
-      document.getElementById('message').innerText =
-        `Authorization successful! Your code is: ${code}. Please copy this code and paste it into Obsidian.`;
+      const target = 'obsidian://ticktick-callback'
+        + '?code=' + encodeURIComponent(code)
+        + '&state=' + encodeURIComponent(state);
+      messageEl.innerText = 'Returning you to Obsidian…';
+      const fallback = document.getElementById('fallback');
+      const link = document.getElementById('deeplink');
+      link.href = target;
+      fallback.style.display = 'block';
+      window.location.replace(target);
     } else {
-      document.getElementById('message').innerText =
-        'Authorization failed or was canceled. Please try again.';
+      messageEl.innerText = 'Authorization failed or was canceled. Please try again.';
     }
   </script>
 </body>

@@ -83,6 +83,18 @@ export default class TickTickPlugin extends Plugin {
         await this.loadSettings();
         this.addSettingTab(new TickTickSettingTab(this.app, this));
 
+        this.registerObsidianProtocolHandler('ticktick-callback', async (params) => {
+            if (!params.code) {
+                new Notice('TickTick auth failed: no authorization code returned.');
+                return;
+            }
+            if (!this.settings.tempState || params.state !== this.settings.tempState) {
+                new Notice('TickTick auth failed: state mismatch. Please try connecting again.');
+                return;
+            }
+            await this.exchangeAuthCodeForToken(params.code);
+        });
+
         // Command: Create TickTick task
         this.addCommand({
             id: 'create-ticktick-task',
@@ -218,6 +230,8 @@ export default class TickTickPlugin extends Plugin {
 
                 this.settings.accessToken = data.access_token;
                 this.settings.tokenExpiry = Date.now() + (data.expires_in * 1000 * 0.85);
+                this.settings.tempCodeVerifier = undefined;
+                this.settings.tempState = undefined;
                 await this.saveSettings();
                 new Notice('TickTick access token obtained successfully!');
             } else {
