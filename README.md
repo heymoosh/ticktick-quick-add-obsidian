@@ -1,115 +1,119 @@
-# TickTick Quickadd Plugin for Obsidian
+# TickTick Quick Add for Obsidian
 
-The **TickTick Quickadd Plugin** lets you quickly create tasks in TickTick directly from your Obsidian notes. Select a paragraph in any note, run a command or hotkey, and the plugin will:
-- Prepend a `#ticktick` tag to your paragraph (to help you track which text has been sent as a task)
-- Automatically append a unique block anchor so you can later jump directly back to that block
-- Create a TickTick task with the paragraph text as the title and a clickable link that opens the note at that specific block using the Advanced URI plugin
+Send the line or paragraph at your cursor straight to TickTick as a new task — with a one-tap link back to the exact spot in your note. Works on desktop and on mobile (iOS and Android).
 
-## Features
+When you trigger the command, the plugin:
+- Appends a `#ticktick` tag and a unique block anchor to the text (so you can find it again, and so the deep link works).
+- Creates a TickTick task with that text as the title.
+- Puts an `obsidian://advanced-uri` link in the task body that opens the note at that exact block when you tap it from TickTick.
 
-- **Quick Task Creation:** Convert a selected paragraph into a TickTick task with one command.
-- **Direct Linking:** Generate an Advanced URI link that takes you right back to the exact block in your note (separate community plugin installation required).
-- **Secure OAuth Integration:** Uses TickTick's OAuth with PKCE for secure authentication and supports automatic token refresh.
-- **Automated Authentication:** Uses a temporary local server during the OAuth flow to automatically capture the callback, so you don’t have to copy and paste the authorization code manually.
-- **User-Friendly Settings:** Enter your TickTick API credentials securely and connect with just a few clicks.
+## Prerequisites
+
+- **Advanced URI** community plugin — required for the deep link back from TickTick to work. Install from Settings → Community plugins → Browse → "Advanced URI".
+- A **TickTick account** with API credentials. See *Setup* below.
 
 ## Installation
 
-1. **Install Advanced URI Plugin:**
-   - Go to **Settings → Community Plugins** in Obsidian.
-   - Search for **Advanced URI**, install it, and then enable it.
+### Mobile (recommended path: BRAT)
 
-2. **Install TickTick Quickadd Plugin:**
-   - Download or clone the repository:  
-     `git clone https://github.com/heymoosh/ticktick-quick-add-obsidian.git`
-   - Open a terminal in the repository folder and run:
-     ```bash
-     npm install
-     npm run build
-     ```
-   - Copy the generated files (e.g., `main.js`, `manifest.json`, and `settings.js`) into your vault's plugins folder:
-     ```
-     YourVault/.obsidian/plugins/ticktick-quickadd-plugin/
-     ```
-   - In Obsidian, go to **Settings → Community Plugins**, disable Safe Mode if necessary, and enable the TickTick Quickadd Plugin.
+The easiest way to install on iOS or Android is via [BRAT](https://github.com/TfTHacker/obsidian42-brat), which sideloads plugins from GitHub.
+
+1. In Obsidian: Settings → Community plugins → turn off **Restricted Mode** if it's on → Browse → install and enable **Obsidian42 - BRAT**.
+2. Settings → BRAT → "Add beta plugin" → paste: `heymoosh/ticktick-quick-add-obsidian`.
+3. BRAT downloads the plugin. Go back to Community plugins and enable **TickTick Quick Add Task**.
+
+> Note: BRAT pulls from the latest GitHub release. If no release exists yet, ask the maintainer to publish one, or use the manual path below.
+
+### Mobile (manual)
+
+1. On a desktop, navigate to your vault's hidden `.obsidian/plugins/` folder. For iCloud-synced vaults this is at:
+   - macOS: `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/<VaultName>/.obsidian/plugins/`
+   - Windows: `iCloudDrive\iCloud~md~obsidian\<VaultName>\.obsidian\plugins\`
+2. Create a folder named `ticktick-quickadd-task` inside `plugins/`.
+3. Drop `main.js` and `manifest.json` into it.
+4. Wait for iCloud to sync, then force-close and reopen Obsidian on your phone.
+5. Settings → Community plugins → enable **TickTick Quick Add Task**.
+
+> Why not just create `.obsidian` on iOS? iOS's Files app refuses to create folders whose names start with a dot. The folder already exists if Obsidian has ever opened the vault — but it's hidden from iOS Files. The desktop path above sidesteps this.
+
+### Desktop (manual)
+
+Either install via BRAT (steps above), or:
+
+1. Clone the repo and build:
+   ```bash
+   git clone https://github.com/heymoosh/ticktick-quick-add-obsidian.git
+   cd ticktick-quick-add-obsidian
+   npm install
+   npm run build
+   ```
+2. Copy `main.js` and `manifest.json` into `<YourVault>/.obsidian/plugins/ticktick-quickadd-task/`.
+3. In Obsidian: Settings → Community plugins → enable **TickTick Quick Add Task**.
 
 ## Setup
 
-1. **Configure API Credentials:**
-   - Open the plugin settings in Obsidian (Settings → Community Plugins → TickTick Quickadd Plugin → Settings).
-   - Enter your **Client ID** and **Client Secret**.  
-     (To get these, sign in to the [TickTick Developer Portal](https://developer.ticktick.com/) and follow their "Get Started" instructions.)
-   - **Important:** Make sure to add `https://ticktick-quick-add-obsidian-6yawfmvnj-mooshs-projects-0635287d.vercel.app` as an allowed redirect URI in your TickTick Developer application settings.
-   - **Note:** Your Client Secret input is masked for security.
+Open the plugin's settings tab. You'll see a two-step "Set up TickTick" view.
 
-2. **Connect to TickTick:**
-   - In the settings, click **Connect to TickTick**.
-   - The plugin will start a temporary local server on port 3000 to handle the OAuth callback.
-   - Your browser will open the OAuth authorization URL. Log in to TickTick and authorize the plugin.
-   - After authorizing, you'll be automatically redirected to the local callback server, which will capture the authorization code and exchange it for an access token.
-   - Once connected, you'll receive a notice that the access token was obtained successfully.
-   - **Note:** If you have a firewall, you may need to allow access to the temporary local server on port 3000.
+### Step 1 — Enter your TickTick app credentials
 
-3. **Configure Hotkeys:**
-   - In Obsidian's **Settings → Hotkeys**, scroll down to your TickTick Quickadd Plugin.
-   - Assign a keyboard shortcut (e.g., Ctrl+Alt+T) to the command **"Create TickTick Task from Paragraph"**.
+1. Sign in to the [TickTick Developer Portal](https://developer.ticktick.com/) and create an app.
+2. In the developer portal, set your app's **Redirect URI** to the value shown in the plugin's "Redirect URI" field (the default points at a Vercel callback page that hands you back to Obsidian via a deep link).
+3. Copy the **Client ID** and **Client Secret** from the developer portal into the corresponding plugin fields.
 
-## Using the Plugin
+### Step 2 — Authorize
 
-1. In a note, select a paragraph or place your cursor within the paragraph you want to send as a task.
-2. Run the **"Create TickTick Task from Paragraph"** command (via your assigned hotkey).
-3. The plugin will:
-   - Prepend `#ticktick` to the beginning of your paragraph.
-   - Automatically append a unique block anchor to the end.
-   - Create a TickTick task with the paragraph text as the task title and include a clickable link in the task description.
-4. **Important:** Do not remove the block anchor (the part that starts with `^`); otherwise, the Advanced URI link in the TickTick task will break.
+1. Tap **Connect**.
+2. A small popup appears with a tappable "Open TickTick login" link. Tap it.
+3. Your browser opens TickTick's authorization page. Sign in and approve access.
+4. The callback page should redirect you straight back into Obsidian. You'll see "TickTick access token obtained successfully!"
+5. **If the callback page instead shows you an authorization code as text**, copy that code and paste it into the "Authorization code" field in the plugin settings. The plugin will exchange it for a token immediately.
 
-## Troubleshooting & Testing
-  
-- **Port Already in Use:**  
-  If port 3000 is already in use by another application, the OAuth flow will fail. Close any applications using port 3000 and try again.
+Once connected, the settings view collapses into the day-to-day view: Plugin behavior options up top, plus an **Advanced — Connection details** section (collapsed) with your credentials, tokens, a reconnect button, and a disconnect button.
 
-- **Firewall Blocking:**  
-  If your firewall is blocking the temporary local server, you may need to allow access to port 3000 during the OAuth flow.
+## Using the plugin
 
-- **Invalid Credential Handling:**  
-  If you enter an invalid Client ID or Secret, the OAuth flow will fail. Make sure your credentials are correct and match those in the TickTick Developer Portal.
+Place the cursor on the line you want to send (or anywhere in the paragraph if you've set Selection mode to "Entire paragraph"), then trigger the command in any of these ways:
 
-- **Network Failure Recovery:**  
-  The plugin has try/catch blocks. If you experience a network failure, an error notice will appear. Reconnect when your connection is stable.
+- **Command palette** (all platforms): open palette → "Create TickTick task".
+- **Hotkey** (desktop): Settings → Hotkeys → search "Create TickTick task" → assign a shortcut.
+- **Mobile toolbar** (mobile): Settings → Mobile → Manage toolbar → "+" → search "Create TickTick task" → add. A tappable button now sits above your keyboard.
+- **Editor context menu** (long-press on mobile, right-click on desktop): "Create TickTick task" appears in the menu.
 
-- **Special Character Handling:**  
-  The plugin encodes task titles and descriptions in JSON. Test by including emojis or symbols to ensure they appear correctly in TickTick.
+After triggering, you'll see a notice confirming the task was created.
 
-- **Rate Limit Simulation:**  
-  Although there is no built-in rate limiter, avoid rapidly triggering the command repeatedly. Future updates might include a short delay between API calls.
+> Don't manually delete the `^xxxxxxxx` block anchor the plugin adds — that's what makes the "Open in Obsidian" link in TickTick work. The `#ticktick` tag is just for your own bookkeeping; you can change or remove it without breaking anything.
 
-- **Plugin Uninstall/Reinstall:**  
-  **Note:** Currently, if you uninstall (delete the plugin folder) and then reinstall, your stored credentials are lost. You will need to re-enter your API credentials and reauthenticate.
+## Settings reference
 
-## Known Issues
+**Plugin behavior** (shown once connected):
 
-- **Settings Persistence:**  
-  Credentials (Client ID, Client Secret, tokens) are stored using Obsidian's storage. If you uninstall and reinstall the plugin, these settings are cleared.
+- **Selection mode** — `Current line` (default) sends just the line your cursor is on; `Entire paragraph` sends the consecutive block of non-empty lines around the cursor.
+- **Tag position** — `Append (end)` (default) puts `#ticktick` at the end of the text; `Prepend (beginning)` puts it at the start.
 
-## Code Quality
+**Advanced — Connection details** (collapsed by default once connected):
 
-- This plugin is written in TypeScript with structured logging and robust error handling.
-- All sensitive credentials are provided by the user through the settings UI—no hardcoded secrets are published.
-- The temporary local server is only active during the OAuth flow and automatically closes after completion.
+- **Reconnect** — re-run the OAuth flow without clearing your current connection. Useful if your refresh token stops working.
+- **Authorization code** — manual paste fallback for the OAuth flow.
+- **Disconnect** — clear stored tokens. You'll need to authorize again to create more tasks.
+- **Client ID / Client Secret / Redirect URI** — your TickTick app credentials.
+- **Access token / Refresh token** — current tokens, read-only.
 
-## Security:
-- The plugin does not include any hardcoded credentials.
-- All sensitive data is entered by the user through the settings UI. 
-- All data remains local
-- The temporary server only runs during authentication and immediately closes afterward
-- OAuth state validation is implemented to prevent CSRF attacks
-- No tracking/analytics
+## Troubleshooting
+
+- **"TickTick auth failed: state mismatch"** — the OAuth flow expired or was started in a different session. Tap Connect again and complete the flow without delays.
+- **"Failed to obtain access token"** — most often a bad Client ID or Secret, or the Redirect URI you set in the TickTick developer portal doesn't exactly match the one in the plugin. Copy/paste both rather than typing.
+- **The Connect popup link does nothing** — make sure your default browser is set and you've allowed Obsidian to open external links. Try long-pressing the link to copy it, then paste into Safari/Chrome.
+- **Callback page shows the code as text instead of returning to Obsidian** — that's the manual-fallback case. Paste the code into the "Authorization code" field; the plugin will exchange it for a token. (This happens if the callback page hasn't been deployed with the deep-link redirect.)
+- **The "Open in Obsidian" link in TickTick does nothing** — confirm the Advanced URI plugin is installed and enabled in the same vault.
+- **Plugin doesn't appear in Community plugins on mobile** — confirm the files are at `<vault>/.obsidian/plugins/ticktick-quickadd-task/main.js` and `…/manifest.json`, then force-close and relaunch Obsidian.
+
+## Privacy & security
+
+- The plugin stores credentials only in Obsidian's local plugin data — nothing is sent to third-party servers other than TickTick itself.
+- OAuth uses PKCE and a CSRF state check; the state parameter is verified before the auth code is accepted.
+- The callback URL is a static Vercel-hosted page whose only job is to redirect back to `obsidian://ticktick-callback?...`. It does not see your tokens; the token exchange happens directly between the plugin and TickTick.
+- No tracking, no analytics.
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE).
-
----
-
-*Happy note-taking and tasking!*
+[MIT](./LICENSE)

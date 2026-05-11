@@ -129,6 +129,7 @@ export default class TickTickPlugin extends Plugin {
         this.addCommand({
             id: 'create-ticktick-task',
             name: 'Create TickTick task',
+            icon: 'lucide-circle-check-big',
             editorCallback: (editor: Editor, view: MarkdownView) => this.createTaskFromEditor(editor, view)
         });
 
@@ -138,7 +139,7 @@ export default class TickTickPlugin extends Plugin {
                 menu.addItem(item => {
                     item
                         .setTitle('Create TickTick task')
-                        .setIcon('checkmark')
+                        .setIcon('lucide-circle-check-big')
                         .onClick(async () => {
                             await this.createTaskFromEditor(editor, info);
                         });
