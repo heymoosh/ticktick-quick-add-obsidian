@@ -76,11 +76,13 @@ Place the cursor on the line you want to send (or anywhere in the paragraph if y
 
 ### On mobile (recommended)
 
+- **Three-dot menu** — tap the `⋯` button in the top-right of any note. "Create TickTick task" appears alongside Bookmark, Find, Copy Advanced URI, etc. No setup required.
 - **Mobile toolbar** — Settings → Mobile → Manage toolbar → "+" → search "Create TickTick task" → add. A tappable button now sits above your keyboard, one tap away whenever you're editing a note.
 - **Command palette** — the palette isn't bound to the three-dot menu on mobile; you have to add it to the toolbar yourself: Settings → Mobile → Manage toolbar → "+" → search "Command palette" → add. Tap that toolbar button to open the searchable command list, then type "ticktick".
 
 ### On desktop
 
+- **Three-dot menu** — the `⋯` button in any note's tab bar / header includes "Create TickTick task".
 - **Hotkey** — Settings → Hotkeys → search "Create TickTick task" → assign a shortcut.
 - **Command palette** — `Ctrl/Cmd+P` → type "ticktick" → enter.
 
