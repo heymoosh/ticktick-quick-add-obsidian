@@ -1,5 +1,5 @@
 import { arrayBufferToBase64 } from 'obsidian';
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, requestUrl } from 'obsidian';
+import { App, Editor, MarkdownFileInfo, MarkdownView, Menu, Modal, Notice, Plugin, requestUrl } from 'obsidian';
 import { TickTickSettingTab, TickTickSettings, DEFAULT_SETTINGS } from './settings';
 
 // Helper function to generate a random alphanumeric string (for block anchors and state)
@@ -126,68 +126,79 @@ export default class TickTickPlugin extends Plugin {
             await this.exchangeAuthCodeForToken(params.code);
         });
 
-        // Command: Create TickTick task
         this.addCommand({
             id: 'create-ticktick-task',
             name: 'Create TickTick task',
-            editorCallback: async (editor: Editor, view: MarkdownView) => {
-                const cursor = editor.getCursor();
-                if (!view.file) {
-                    new Notice("No file found for the current view!");
-                    return;
-                }
-
-                // Get text based on selection mode setting
-                let taskText: string;
-                let rangeStart: number;
-                let rangeEnd: number;
-                if (this.settings.selectionMode === 'paragraph') {
-                    const { text, start, end } = getParagraph(editor, cursor.line);
-                    taskText = text;
-                    rangeStart = start;
-                    rangeEnd = end;
-                } else {
-                    const { text, line } = getCurrentLine(editor, cursor.line);
-                    taskText = text;
-                    rangeStart = line;
-                    rangeEnd = line;
-                }
-
-                if (!taskText.trim()) {
-                    new Notice("No text found on the current line!");
-                    return;
-                }
-
-                // Generate unique block anchor
-                const blockId = generateRandomString(8);
-                // Apply tag based on tag position setting
-                const updatedText = this.settings.tagPosition === 'prepend'
-                    ? `#ticktick ${taskText} ^${blockId}`
-                    : `${taskText} #ticktick ^${blockId}`;
-                editor.replaceRange(updatedText, { line: rangeStart, ch: 0 }, { line: rangeEnd, ch: editor.getLine(rangeEnd).length });
-
-                // Construct Advanced URI for the block
-                const vaultName = this.app.vault.getName();
-                const filePath = view.file.path;
-                const advancedUri = `obsidian://advanced-uri?vault=${encodeURIComponent(vaultName)}&filepath=${encodeURIComponent(filePath)}&block=${encodeURIComponent(blockId)}`;
-                const taskDescription = `${taskText}\n\n[Open in Obsidian](${advancedUri})`;
-                const taskTitle = taskText.length > 50 ? taskText.substring(0, 50) + "..." : taskText;
-
-                await this.ensureFreshToken();
-
-                try {
-                    const result = await this.createTicktickTask(taskTitle, taskDescription);
-                    if (result.success) {
-                        new Notice("TickTick task created successfully!");
-                    } else {
-                        new Notice("Failed to create TickTick task.");
-                    }
-                } catch (error) {
-                    log(this, 'task_creation_failed', { error: error.message });
-                    new Notice(`Failed to create task: ${error.message}\nCheck console for details.`);
-                }
-            }
+            editorCallback: (editor: Editor, view: MarkdownView) => this.createTaskFromEditor(editor, view)
         });
+
+        this.registerEvent(
+            this.app.workspace.on('editor-menu', (menu: Menu, editor: Editor, info: MarkdownView | MarkdownFileInfo) => {
+                if (!(info instanceof MarkdownView) || !info.file) return;
+                menu.addItem(item => {
+                    item
+                        .setTitle('Create TickTick task')
+                        .setIcon('checkmark')
+                        .onClick(async () => {
+                            await this.createTaskFromEditor(editor, info);
+                        });
+                });
+            })
+        );
+    }
+
+    async createTaskFromEditor(editor: Editor, view: MarkdownView): Promise<void> {
+        const cursor = editor.getCursor();
+        if (!view.file) {
+            new Notice("No file found for the current view!");
+            return;
+        }
+
+        let taskText: string;
+        let rangeStart: number;
+        let rangeEnd: number;
+        if (this.settings.selectionMode === 'paragraph') {
+            const { text, start, end } = getParagraph(editor, cursor.line);
+            taskText = text;
+            rangeStart = start;
+            rangeEnd = end;
+        } else {
+            const { text, line } = getCurrentLine(editor, cursor.line);
+            taskText = text;
+            rangeStart = line;
+            rangeEnd = line;
+        }
+
+        if (!taskText.trim()) {
+            new Notice("No text found on the current line!");
+            return;
+        }
+
+        const blockId = generateRandomString(8);
+        const updatedText = this.settings.tagPosition === 'prepend'
+            ? `#ticktick ${taskText} ^${blockId}`
+            : `${taskText} #ticktick ^${blockId}`;
+        editor.replaceRange(updatedText, { line: rangeStart, ch: 0 }, { line: rangeEnd, ch: editor.getLine(rangeEnd).length });
+
+        const vaultName = this.app.vault.getName();
+        const filePath = view.file.path;
+        const advancedUri = `obsidian://advanced-uri?vault=${encodeURIComponent(vaultName)}&filepath=${encodeURIComponent(filePath)}&block=${encodeURIComponent(blockId)}`;
+        const taskDescription = `${taskText}\n\n[Open in Obsidian](${advancedUri})`;
+        const taskTitle = taskText.length > 50 ? taskText.substring(0, 50) + "..." : taskText;
+
+        await this.ensureFreshToken();
+
+        try {
+            const result = await this.createTicktickTask(taskTitle, taskDescription);
+            if (result.success) {
+                new Notice("TickTick task created successfully!");
+            } else {
+                new Notice("Failed to create TickTick task.");
+            }
+        } catch (error) {
+            log(this, 'task_creation_failed', { error: error.message });
+            new Notice(`Failed to create task: ${error.message}\nCheck console for details.`);
+        }
     }
 
     onunload() {
