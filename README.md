@@ -14,15 +14,20 @@ When you trigger the command, the plugin:
 
 ## Installation
 
-### Mobile (recommended path: BRAT)
+### Recommended (mobile or desktop)
 
-The easiest way to install on iOS or Android is via [BRAT](https://github.com/TfTHacker/obsidian42-brat), which sideloads plugins from GitHub.
+Install directly from Obsidian's Community Plugins directory:
 
-1. In Obsidian: Settings → Community plugins → turn off **Restricted Mode** if it's on → Browse → install and enable **Obsidian42 - BRAT**.
+1. Settings → Community plugins → turn off **Restricted Mode** if it's on.
+2. Browse → search "TickTick Quick Add Task" → Install → Enable.
+
+### Beta / pre-release via BRAT
+
+If you want a version newer than what's in the Community Plugins directory, use [BRAT](https://github.com/TfTHacker/obsidian42-brat) to sideload it from GitHub:
+
+1. Install **Obsidian42 - BRAT** from Community plugins.
 2. Settings → BRAT → "Add beta plugin" → paste: `heymoosh/ticktick-quick-add-obsidian`.
-3. BRAT downloads the plugin. Go back to Community plugins and enable **TickTick Quick Add Task**.
-
-> Note: BRAT pulls from the latest GitHub release. If no release exists yet, ask the maintainer to publish one, or use the manual path below.
+3. Go back to Community plugins and enable **TickTick Quick Add Task**.
 
 ### Mobile (manual)
 
@@ -36,9 +41,9 @@ The easiest way to install on iOS or Android is via [BRAT](https://github.com/Tf
 
 > Why not just create `.obsidian` on iOS? iOS's Files app refuses to create folders whose names start with a dot. The folder already exists if Obsidian has ever opened the vault — but it's hidden from iOS Files. The desktop path above sidesteps this.
 
-### Desktop (manual)
+### Desktop (manual / for developers)
 
-Either install via BRAT (steps above), or:
+If you want to build from source instead of using the directory:
 
 1. Clone the repo and build:
    ```bash
