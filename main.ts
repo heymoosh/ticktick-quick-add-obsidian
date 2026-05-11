@@ -1,5 +1,5 @@
 import { arrayBufferToBase64 } from 'obsidian';
-import { App, Editor, MarkdownFileInfo, MarkdownView, Menu, Modal, Notice, Plugin, requestUrl } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, requestUrl } from 'obsidian';
 import { TickTickSettingTab, TickTickSettings, DEFAULT_SETTINGS } from './settings';
 
 // Helper function to generate a random alphanumeric string (for block anchors and state)
@@ -132,20 +132,6 @@ export default class TickTickPlugin extends Plugin {
             icon: 'lucide-circle-check-big',
             editorCallback: (editor: Editor, view: MarkdownView) => this.createTaskFromEditor(editor, view)
         });
-
-        this.registerEvent(
-            this.app.workspace.on('editor-menu', (menu: Menu, editor: Editor, info: MarkdownView | MarkdownFileInfo) => {
-                if (!(info instanceof MarkdownView) || !info.file) return;
-                menu.addItem(item => {
-                    item
-                        .setTitle('Create TickTick task')
-                        .setIcon('lucide-circle-check-big')
-                        .onClick(async () => {
-                            await this.createTaskFromEditor(editor, info);
-                        });
-                });
-            })
-        );
     }
 
     async createTaskFromEditor(editor: Editor, view: MarkdownView): Promise<void> {

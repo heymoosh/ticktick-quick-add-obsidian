@@ -72,12 +72,17 @@ Once connected, the settings view collapses into the day-to-day view: Plugin beh
 
 ## Using the plugin
 
-Place the cursor on the line you want to send (or anywhere in the paragraph if you've set Selection mode to "Entire paragraph"), then trigger the command in any of these ways:
+Place the cursor on the line you want to send (or anywhere in the paragraph if you've set Selection mode to "Entire paragraph"), then trigger the command **"Create TickTick task"** in one of these ways:
 
-- **Command palette** (all platforms): open palette → "Create TickTick task".
-- **Hotkey** (desktop): Settings → Hotkeys → search "Create TickTick task" → assign a shortcut.
-- **Mobile toolbar** (mobile): Settings → Mobile → Manage toolbar → "+" → search "Create TickTick task" → add. A tappable button now sits above your keyboard.
-- **Editor context menu** (long-press on mobile, right-click on desktop): "Create TickTick task" appears in the menu.
+### On mobile (recommended)
+
+- **Mobile toolbar** — Settings → Mobile → Manage toolbar → "+" → search "Create TickTick task" → add. A tappable button now sits above your keyboard, one tap away whenever you're editing a note.
+- **Command palette** — the palette isn't bound to the three-dot menu on mobile; you have to add it to the toolbar yourself: Settings → Mobile → Manage toolbar → "+" → search "Command palette" → add. Tap that toolbar button to open the searchable command list, then type "ticktick".
+
+### On desktop
+
+- **Hotkey** — Settings → Hotkeys → search "Create TickTick task" → assign a shortcut.
+- **Command palette** — `Ctrl/Cmd+P` → type "ticktick" → enter.
 
 After triggering, you'll see a notice confirming the task was created.
 
