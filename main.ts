@@ -1,5 +1,5 @@
 import { arrayBufferToBase64 } from 'obsidian';
-import { App, Editor, MarkdownView, Notice, Plugin, requestUrl } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, requestUrl } from 'obsidian';
 import { TickTickSettingTab, TickTickSettings, DEFAULT_SETTINGS } from './settings';
 
 // Helper function to generate a random alphanumeric string (for block anchors and state)
@@ -60,6 +60,37 @@ async function generatePKCECodes(): Promise<{ codeVerifier: string; codeChalleng
       .replace(/\//g, '_')
       .replace(/=+$/, '');
     return { codeVerifier, codeChallenge };
+}
+
+// Modal that presents the OAuth URL as a tappable link.
+// iOS blocks programmatic window.open after async work loses the user gesture,
+// so we let the user tap the link directly — that tap is itself the gesture.
+class AuthLinkModal extends Modal {
+    constructor(app: App, private authUrl: string) {
+        super(app);
+    }
+
+    onOpen() {
+        const { contentEl } = this;
+        contentEl.empty();
+        contentEl.createEl('h2', { text: 'Authorize TickTick' });
+        contentEl.createEl('p', {
+            text: 'Tap the link below to open the TickTick login page. After you approve access, you will be returned to Obsidian automatically.'
+        });
+        const link = contentEl.createEl('a', {
+            text: 'Open TickTick login',
+            href: this.authUrl
+        });
+        link.setAttr('target', '_blank');
+        link.setAttr('rel', 'noopener');
+        link.style.display = 'inline-block';
+        link.style.marginTop = '0.5em';
+        link.style.fontWeight = 'bold';
+    }
+
+    onClose() {
+        this.contentEl.empty();
+    }
 }
 
 // Structured logging helper
@@ -181,8 +212,7 @@ export default class TickTickPlugin extends Plugin {
         this.settings.tempState = state;
         await this.saveSettings();
         const authUrl = `https://ticktick.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${scope}&code_challenge=${codeChallenge}&code_challenge_method=S256&state=${state}`;
-        window.open(authUrl, '_blank');
-        new Notice('OAuth flow initiated. Please complete it in your browser.');
+        new AuthLinkModal(this.app, authUrl).open();
     }
 
     /**
