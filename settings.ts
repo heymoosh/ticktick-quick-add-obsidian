@@ -137,5 +137,20 @@ export class TickTickSettingTab extends PluginSettingTab {
                     await this.plugin.startAuthFlow();
                 });
             });
+
+        new Setting(containerEl)
+            .setName('Authorization code (manual fallback)')
+            .setDesc('Only needed if the automatic redirect back to Obsidian did not work. Paste the code shown on the callback page here.')
+            .addText(text =>
+                text
+                    .setPlaceholder('Paste authorization code')
+                    .onChange(async (code) => {
+                        if (code.trim()) {
+                            await this.plugin.exchangeAuthCodeForToken(code.trim());
+                            text.setValue('');
+                            this.display();
+                        }
+                    })
+            );
     }
 }
