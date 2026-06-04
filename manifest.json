@@ -1,11 +1,10 @@
 {
   "id": "ticktick-quickadd-task",
   "name": "TickTick Quick Add Task",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "minAppVersion": "1.4.0",
-  "description": "Create TickTick tasks from text blocks with automatic Obsidian URI links. Requires Advanced URI plugin.",
+  "description": "Create TickTick tasks from text at your cursor with automatic deep links back to your notes. Requires the Advanced URI plugin.",
   "author": "Muxin Li",
   "authorUrl": "https://github.com/heymoosh",
-  "isDesktopOnly": false,
-  "main": "main.js"
+  "isDesktopOnly": false
 }

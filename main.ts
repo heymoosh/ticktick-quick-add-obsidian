@@ -37,17 +37,6 @@ function getParagraph(editor: Editor, currentLine: number): { text: string, star
     return { text: paragraphText.trim(), start, end };
 }
 
-// Helper function to base64url-encode an ArrayBuffer
-function base64UrlEncode(buffer: ArrayBuffer): string {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    bytes.forEach(b => (binary += String.fromCharCode(b)));
-    return btoa(binary)
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=+$/, '');
-}
-
 // Helper function to generate PKCE codes: codeVerifier and corresponding codeChallenge
 async function generatePKCECodes(): Promise<{ codeVerifier: string; codeChallenge: string }> {
     const codeVerifier = generateRandomString(64); // between 43 and 128 characters

@@ -1,4 +1,4 @@
-# TickTick Quick Add for Obsidian
+# TickTick Quick Add Task
 
 Send the line or paragraph at your cursor straight to TickTick as a new task — with a one-tap link back to the exact spot in your note. Works on desktop and on mobile (iOS and Android).
 
