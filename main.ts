@@ -37,6 +37,33 @@ function getParagraph(editor: Editor, currentLine: number): { text: string, star
     return { text: paragraphText.trim(), start, end };
 }
 
+// Strip Markdown formatting so the TickTick task title is plain text.
+// Removes leading list/checkbox/heading/quote markers and inline emphasis,
+// keeping the inner text. Leaves single underscores alone to preserve
+// snake_case identifiers.
+function stripMarkdown(text: string): string {
+    return text
+        // Images: ![alt](url) -> alt
+        .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+        // Markdown links: [text](url) -> text
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+        // Wiki links: [[page|alias]] -> alias, [[page]] -> page
+        .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')
+        .replace(/\[\[([^\]]+)\]\]/g, '$1')
+        // Leading blockquote / heading / list / checkbox / ordered-list markers
+        .replace(/^\s*(?:>\s*|#{1,6}\s+|[-*+]\s+\[[ xX]\]\s+|[-*+]\s+|\d+\.\s+)+/, '')
+        // Bold/italic via underscores: only strip matched pairs, so
+        // snake_case identifiers are left intact.
+        .replace(/__([^_]+)__/g, '$1')
+        // Asterisk emphasis, highlight, strikethrough, inline code:
+        // remove the markers whether or not they're balanced (a dangling
+        // "**" at the start of a line should still be stripped).
+        .replace(/\*\*?|~~|==|`/g, '')
+        // Collapse remaining whitespace/newlines
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 // Helper function to generate PKCE codes: codeVerifier and corresponding codeChallenge
 async function generatePKCECodes(): Promise<{ codeVerifier: string; codeChallenge: string }> {
     const codeVerifier = generateRandomString(64); // between 43 and 128 characters
@@ -177,7 +204,8 @@ export default class TickTickPlugin extends Plugin {
         const filePath = view.file.path;
         const advancedUri = `obsidian://advanced-uri?vault=${encodeURIComponent(vaultName)}&filepath=${encodeURIComponent(filePath)}&block=${encodeURIComponent(blockId)}`;
         const taskDescription = `${taskText}\n\n[Open in Obsidian](${advancedUri})`;
-        const taskTitle = taskText.length > 50 ? taskText.substring(0, 50) + "..." : taskText;
+        const cleanTitle = stripMarkdown(taskText);
+        const taskTitle = cleanTitle.length > 50 ? cleanTitle.substring(0, 50) + "..." : cleanTitle;
 
         await this.ensureFreshToken();
 
