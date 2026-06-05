@@ -89,13 +89,13 @@ export class TickTickSettingTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Redirect URI')
-            .setDesc('Copy this exact value into your TickTick app\'s Redirect URI field in the developer portal. Only change it here if you self-host the callback page.')
+            .setDesc('Copy this exact value into your TickTick app\'s Redirect URI field in the developer portal. Do not add a trailing slash — the URIs must match exactly. Only change it here if you self-host the callback page.')
             .addText(text =>
                 text
                     .setPlaceholder(DEFAULT_SETTINGS.redirectUri!)
                     .setValue(this.plugin.settings.redirectUri || '')
                     .onChange(async (value) => {
-                        this.plugin.settings.redirectUri = value.trim();
+                        this.plugin.settings.redirectUri = value.trim().replace(/\/+$/, '');
                         await this.plugin.saveSettings();
                     })
             );
@@ -241,11 +241,12 @@ export class TickTickSettingTab extends PluginSettingTab {
 
         new Setting(details)
             .setName('Redirect URI')
+            .setDesc('Must match the value registered in your TickTick app exactly, with no trailing slash.')
             .addText(text =>
                 text
                     .setValue(this.plugin.settings.redirectUri || '')
                     .onChange(async (value) => {
-                        this.plugin.settings.redirectUri = value.trim();
+                        this.plugin.settings.redirectUri = value.trim().replace(/\/+$/, '');
                         await this.plugin.saveSettings();
                     })
             );

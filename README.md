@@ -114,6 +114,7 @@ After triggering, you'll see a notice confirming the task was created.
 
 - **"TickTick auth failed: state mismatch"** — the OAuth flow expired or was started in a different session. Tap Connect again and complete the flow without delays.
 - **"Failed to obtain access token"** — most often a bad Client ID or Secret, or the Redirect URI you set in the TickTick developer portal doesn't exactly match the one in the plugin. Copy/paste both rather than typing.
+- **`"invalid_grant"` / `"Invalid redirect: ... does not match one of the registered values"`** — the URI registered in the TickTick Developer Portal isn't byte-equal to the one the plugin sends. The most common cause is a trailing `/` in the portal entry. Edit your TickTick app and remove any trailing slash so it matches the plugin's Redirect URI field exactly.
 - **The Connect popup link does nothing** — make sure your default browser is set and you've allowed Obsidian to open external links. Try long-pressing the link to copy it, then paste into Safari/Chrome.
 - **Callback page shows the code as text instead of returning to Obsidian** — that's the manual-fallback case. Paste the code into the "Authorization code" field; the plugin will exchange it for a token. (This happens if the callback page hasn't been deployed with the deep-link redirect.)
 - **The "Open in Obsidian" link in TickTick does nothing** — confirm the Advanced URI plugin is installed and enabled in the same vault.

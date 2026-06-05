@@ -236,7 +236,7 @@ export default class TickTickPlugin extends Plugin {
             new Notice('Please enter your Client ID in the settings.');
             return;
         }
-        const redirectUri = this.settings.redirectUri || 'https://ticktick-quick-add-obsidian-6yawfmvnj-mooshs-projects-0635287d.vercel.app';
+        const redirectUri = (this.settings.redirectUri || 'https://ticktick-quick-add-obsidian-6yawfmvnj-mooshs-projects-0635287d.vercel.app').trim().replace(/\/+$/, '');
         const scope = encodeURIComponent('tasks:read tasks:write');
         const { codeVerifier, codeChallenge } = await generatePKCECodes();
         const state = generateRandomString(32);
@@ -253,7 +253,7 @@ export default class TickTickPlugin extends Plugin {
      */
     async exchangeAuthCodeForToken(code: string): Promise<void> {
         const tokenEndpoint = 'https://ticktick.com/oauth/token';
-        const redirectUri = this.settings.redirectUri || 'https://ticktick-quick-add-obsidian-6yawfmvnj-mooshs-projects-0635287d.vercel.app';
+        const redirectUri = (this.settings.redirectUri || 'https://ticktick-quick-add-obsidian-6yawfmvnj-mooshs-projects-0635287d.vercel.app').trim().replace(/\/+$/, '');
         const clientId = this.settings.clientId;
         const clientSecret = this.settings.clientSecret;
         const codeVerifier = this.settings.tempCodeVerifier;

@@ -1,6 +1,6 @@
 {
 	"name": "ticktick-quickadd-task",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"description": "Create TickTick tasks from text at your cursor with automatic deep links back to your notes. Requires the Advanced URI plugin.",
 	"main": "main.js",
 	"scripts": {
