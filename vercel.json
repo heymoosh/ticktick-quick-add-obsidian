@@ -1,3 +1,6 @@
 {
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "git": {
+    "deploymentEnabled": false
+  }
 }
